@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { groqChat } from "../services/groq.js";
+import { generateAdvice } from "../services/openai.js";
 
 export const analyzeFinance = async (req: Request, res: Response) => {
   try {
@@ -14,20 +14,17 @@ Kullanıcının aylık geliri: ${income} TL
 Harcamaları:
 ${formattedExpenses}
 
-Bu verilere göre kullanıcının bütçesini daha iyi planlaması için önerilerde bulun. Moral verici, samimi ve destekleyici bir dille konuş.
+Sen bir finansal danışmansın. Kullanıcının bütçesini daha iyi planlaması için önerilerde bulun.  
+Cevabını samimi, sade ve moral verici bir Türkçe ile yaz.  
+İngilizce veya çeviri havasında cümleler kurma. "Ben FinansÇet olarak" gibi konuşabilirsin.
 `;
 
-const response = await groqChat([
-  {
-    role: "user",
-    content: prompt
-  }
-]);
+    const response = await generateAdvice(prompt);
 
     res.json({ success: true, message: response });
 
   } catch (error: any) {
-    console.error("❌ Groq HATASI:", error?.message || error);
+    console.error("❌ OpenAI HATASI:", error?.message || error);
     res.status(500).json({ success: false, error: error?.message || "Bir hata oluştu." });
   }
 };
